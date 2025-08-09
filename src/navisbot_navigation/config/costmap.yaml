@@ -6,7 +6,10 @@ costmap:
     robot_base_frame: base_link
     use_sim_time: true
     robot_radius: 0.1
+    # each cell is 5*5 cm
     resolution: 0.05
+    #the unkown cell in the map are converted to unkown in costmap
+    #if false, unkown cells are free which allows the robot to explore unkown areas
     track_unknown_space: true
     plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
     static_layer:
@@ -19,9 +22,14 @@ costmap:
       observation_sources: scan
       scan:
         topic: /scan
+#in meters
         max_obstacle_height: 2.0
+#enables the usage of Bresenham algorithms that clears cells where no obstacles are detected
         clearing: True
+#obstacles marked as true
         marking: True
+#combines static and scan or overrides 
+        combination_method: 1
         data_type: "LaserScan"
         raytrace_max_range: 3.0
         raytrace_min_range: 0.0
@@ -29,6 +37,8 @@ costmap:
         obstacle_min_range: 0.0
     inflation_layer:
       plugin: "nav2_costmap_2d::InflationLayer"
-      cost_scaling_factor: 3.0
+#can be changed
+      cost_scaling_factor: 4.0
+#the footprint plus area that is not recommended: footprint is forbidden the others are scaled
       inflation_radius: 0.55
     always_send_full_costmap: True

@@ -2,6 +2,7 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument
+import os
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 
@@ -25,7 +26,7 @@ def generate_launch_description():
     amcl_config_arg = DeclareLaunchArgument(
         "amcl_config",
         default_value=os.path.join(
-            get_package_share_directory("bumperbot_localization"),
+            get_package_share_directory("navisbot_mapping"),
             "config",
             "amcl.yaml"
         ),

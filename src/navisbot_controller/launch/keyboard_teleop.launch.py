@@ -13,8 +13,8 @@ def generate_launch_description():
         output="screen",
         remappings=[('/cmd_vel', '/keyboard_raw_cmd')],  # Intermediate topic
         parameters=[{
-            'scale_linear': 1.0,    
-            'scale_angular': 8.0,   }]
+            'scale_linear': 2.0,    
+            'scale_angular': 10.0,   }]
     )
 
     # Converter node (Twist -> TwistStamped)
