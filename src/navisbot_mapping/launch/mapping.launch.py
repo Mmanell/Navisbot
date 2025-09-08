@@ -36,8 +36,7 @@ def generate_launch_description():
     map_path = PathJoinSubstitution([
         get_package_share_directory("navisbot_mapping"),
         "maps",
-        map_name,
-        "map.yaml"
+        "maps.yaml"
     ])
     
     nav2_map_server = Node(

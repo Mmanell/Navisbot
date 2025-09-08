@@ -11,61 +11,60 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
+
 def generate_launch_description():
+    # Directories
     navisbot_description = get_package_share_directory("navisbot_description")
-    model_arg = DeclareLaunchArgument(name="model", default_value=os.path.join(
-                                        navisbot_description, "urdf", "bumperbot.urdf.xacro"
-                                        ),
-                                      description="Absolute path to robot urdf file"
+    
+    # Launch arguments
+    model_arg = DeclareLaunchArgument(
+        name="model", 
+        default_value=os.path.join(navisbot_description, "urdf", "bumperbot.urdf.xacro"),
+        description="Absolute path to robot urdf file"
     )
 
     world_name_arg = DeclareLaunchArgument(name="world_name", default_value="empty")
-    
+
+    # Paths
     world_path = PathJoinSubstitution([
-            navisbot_description,
-            "worlds",
-            PythonExpression(expression=["'", LaunchConfiguration("world_name"), "'", " + '.world'"])
-        ]
-    )
+        navisbot_description,
+        "worlds",
+        PythonExpression(expression=["'", LaunchConfiguration("world_name"), "'", " + '.world'"])
+    ])
     
     model_path = str(Path(navisbot_description).parent.resolve())
-    model_path += pathsep + os.path.join(get_package_share_directory("navisbot_description"), 'models')
-
-    gazebo_resource_path = SetEnvironmentVariable(
-        "GZ_SIM_RESOURCE_PATH",
-        model_path
-        )
-
-
-  
+    model_path += pathsep + os.path.join(navisbot_description, 'models')
     
-    robot_description = ParameterValue(Command([
-            "xacro ",
-            LaunchConfiguration("model"),
-        ]),
+    gazebo_resource_path = SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", model_path)
+    
+    # Robot description
+    robot_description = ParameterValue(
+        Command(["xacro ", LaunchConfiguration("model")]),
         value_type=str
     )
-
+    
+    # Nodes
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
-        executable="robot_state_publisher",
-        parameters=[{"robot_description": robot_description,
-                     "use_sim_time": True}]
+        executable="robot_state_publisher", 
+        parameters=[{"robot_description": robot_description, "use_sim_time": True}]
     )
 
     gazebo = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"]),
-                    launch_arguments={
-                    "gz_args": PythonExpression(["'", world_path, " -v 4 -r'"])
-                }.items()
-             )
+        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"]),
+        launch_arguments={
+            "gz_args": PythonExpression(["'", world_path, " -v 4 -r'"])
+        }.items()
+    )
+
     gz_spawn_entity = Node(
         package="ros_gz_sim",
         executable="create",
         output="screen",
-        arguments=["-topic", "robot_description",
-                   "-name", "bumperbot"],
+        arguments=[
+            "-topic", "robot_description",
+            "-name", "bumperbot",
+            "-z", "0.06" ],
     )
 
     gz_ros2_bridge = Node(
@@ -81,10 +80,12 @@ def generate_launch_description():
         ]
     )
 
+
     return LaunchDescription([
         # arguments / env
         model_arg,
         world_name_arg,
+
         gazebo_resource_path,
 
         # nodes

@@ -1,41 +1,40 @@
-#include <memory>
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 
-class TwistConverter : public rclcpp::Node
-{
+
+class TwistRelayNode : public rclcpp::Node {
 public:
-  TwistConverter()
-  : Node("twist_to_twist_stamped")
-  {
-    publisher_ = create_publisher<geometry_msgs::msg::TwistStamped>("/output/cmd_vel", rclcpp::QoS(10));
-    subscription_ = create_subscription<geometry_msgs::msg::Twist>(
-      "/input/cmd_vel",
-      rclcpp::QoS(10),
-      std::bind(&TwistConverter::callback, this, std::placeholders::_1));
-  }
+    TwistRelayNode() : Node("twist_relay")
+    {
+        controller_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
+            "/navisbot_controller/cmd_vel_unstamped",
+            10,
+            std::bind(&TwistRelayNode::controller_twist_callback, this, std::placeholders::_1)
+        );
+        controller_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
+            "/navisbot_controller/cmd_vel", 10);
+    }
 
 private:
-  void callback(const geometry_msgs::msg::Twist::SharedPtr msg)
-  {
-    auto stamped_msg = geometry_msgs::msg::TwistStamped();
-    stamped_msg.header.stamp = get_clock()->now();
-    stamped_msg.header.frame_id = "base_link";  // match your joystick/config
-    stamped_msg.twist = *msg;
-    publisher_->publish(stamped_msg);
-  }
+    void controller_twist_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
+    {
+        geometry_msgs::msg::TwistStamped twist_stamped;
+        twist_stamped.header.stamp = get_clock()->now();
+        twist_stamped.header.frame_id = "base_link"; 
+        twist_stamped.twist = *msg;
+        controller_pub_->publish(twist_stamped);
+    }
 
-  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr publisher_;
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_;
-  
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr controller_sub_;
+    rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr controller_pub_;
 };
 
 int main(int argc, char * argv[])
 {
-  rclcpp::init(argc, argv);
-  auto node = std::make_shared<TwistConverter>();       
-  rclcpp::spin(node);
-  rclcpp::shutdown();
-  return 0;
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<TwistRelayNode>();
+    rclcpp::spin(node);
+    rclcpp::shutdown();
+    return 0;
 }
