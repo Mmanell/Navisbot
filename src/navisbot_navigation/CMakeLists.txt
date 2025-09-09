@@ -13,7 +13,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 
 install(
-  DIRECTORY config launch behavior_tree
+  DIRECTORY config launch 
   DESTINATION share/${PROJECT_NAME}
 )
 

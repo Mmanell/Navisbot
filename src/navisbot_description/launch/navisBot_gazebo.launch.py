@@ -23,7 +23,7 @@ def generate_launch_description():
         description="Absolute path to robot urdf file"
     )
 
-    world_name_arg = DeclareLaunchArgument(name="world_name", default_value="empty")
+    world_name_arg = DeclareLaunchArgument(name="world_name", default_value="small_warehouse")
 
     # Paths
     world_path = PathJoinSubstitution([
@@ -63,7 +63,7 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "-topic", "robot_description",
-            "-name", "bumperbot",
+            "-name", "navisbot",
             "-z", "0.06" ],
     )
 
@@ -82,13 +82,9 @@ def generate_launch_description():
 
 
     return LaunchDescription([
-        # arguments / env
         model_arg,
         world_name_arg,
-
         gazebo_resource_path,
-
-        # nodes
         robot_state_publisher_node,
         gazebo,
         gz_spawn_entity,

@@ -129,78 +129,12 @@ local_costmap:
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
       always_send_full_costmap: True
-costmap:
-  ros__parameters:
-    update_frequency: 1.0
-    publish_frequency: 1.0
-    global_frame: map
-    robot_base_frame: base_link
-    use_sim_time: true
-    robot_radius: 0.1
-    # each cell is 5*5 cm
-    resolution: 0.05
-    #the unkown cell in the map are converted to unkown in costmap
-    #if false, unkown cells are free which allows the robot to explore unkown areas
-    track_unknown_space: true
-    plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
-    static_layer:
-      plugin: "nav2_costmap_2d::StaticLayer"
-      map_topic: /map
-      map_subscribe_transient_local: True
-    obstacle_layer:
-      plugin: "nav2_costmap_2d::ObstacleLayer"
-      enabled: True
-      observation_sources: scan
-      scan:
-        topic: /scan
-#in meters
-        max_obstacle_height: 2.0
-#enables the usage of Bresenham algorithms that clears cells where no obstacles are detected
-        clearing: True
-#obstacles marked as true
-        marking: True
-#combines static and scan or overrides 
-        combination_method: 1
-        data_type: "LaserScan"
-        raytrace_max_range: 3.0
-        raytrace_min_range: 0.0
-        obstacle_max_range: 2.5
-        obstacle_min_range: 0.0
-    inflation_layer:
-      plugin: "nav2_costmap_2d::InflationLayer"
-#can be changed
-      cost_scaling_factor: 4.0
-#the footprint plus area that is not recommended: footprint is forbidden the others are scaled
-      inflation_radius: 0.55
-    always_send_full_costmap: True
-# planner_server:
-#   ros__parameters:
-# #always up to date
-#     expected_planner_frequency: 20.0
-#     use_sim_time: true
-#     planner_plugins: ["GridBased"]
-#     GridBased:
-#       plugin: "nav2_smac_planner/SmacPlanner2D"
-#       tolerance: 0.125                      # tolerance for planning if unable to reach exact pose, in meters
-#       downsample_costmap: false             # whether or not to downsample the map
-#       downsampling_factor: 1                # multiplier for the resolution of the costmap layer (e.g. 2 on a 5cm costmap would be 10cm)
-#       allow_unknown: true                   # allow traveling in unknown space
-#       max_iterations: 1000000               # maximum total iterations to search for before failing (in case unreachable), set to -1 to disable
-#       max_on_approach_iterations: 1000      # maximum number of iterations to attempt to reach goal once in tolerance
-#       max_planning_time: 2.0                # max time in s for planner to plan, smooth
-#       cost_travel_multiplier: 2.0           # Cost multiplier to apply to search to steer away from high cost areas. Larger values will place in the center of aisles more exactly (if non-`FREE` cost potential field exists) but take slightly longer to compute. To optimize for speed, a value of 1.0 is reasonable. A reasonable tradeoff value is 2.0. A value of 0.0 effective disables steering away from obstacles and acts like a naive binary search A*.
-#       use_final_approach_orientation: false # Whether to set the final path pose at the goal's orientation to the requested orientation (false) or in line with the approach angle so the robot doesn't rotate to heading (true)
-#       smoother:
-#         max_iterations: 1000
-#         w_smooth: 0.3
-#         w_data: 0.2
-#         tolerance: 1.0e-10
 
 planner_server:
   ros__parameters:
     planner_plugins: ['GridBased']
     GridBased:
-      plugin: 'nav2_navfn_planner/NavfnPlanner' # In Iron and older versions, "/" was used instead of "::"
+      plugin: 'nav2_navfn_planner/NavfnPlanner' 
       use_astar: True
       allow_unknown: True
       tolerance: 1.0
@@ -240,6 +174,7 @@ global_costmap:
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
       always_send_full_costmap: True
+
 smoother_server:
   ros__parameters:
     use_sim_time: true
@@ -247,9 +182,9 @@ smoother_server:
     simple_smoother:
       plugin: "nav2_smoother::SimpleSmoother"
       tolerance: 1.0e-10
-#max nb of iterations the algorithm will attemp smooting the path
+      #max nb of iterations the algorithm will attemp smooting the path
       max_its: 1000
-#enable the plugin to recursively smooth the path to refine the quality even further
+      #enable the plugin to recursively smooth the path to refine the quality even further
       do_refinement: true
 
 

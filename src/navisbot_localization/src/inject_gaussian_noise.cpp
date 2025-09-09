@@ -42,10 +42,6 @@ InjectGaussianNoise::InjectGaussianNoise(const std::string& name)
 
 void InjectGaussianNoise::jointCallback(const sensor_msgs::msg::JointState &state)
 {
-    // Implements the inverse differential kinematic model
-    // Given the position of the wheels, calculates their velocities
-    // then calculates the velocity of the robot wrt the robot frame
-    // and then converts it in the global frame and publishes the TF
 
     // Add noise to wheel readings
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();

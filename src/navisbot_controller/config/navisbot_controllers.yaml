@@ -5,11 +5,8 @@ controller_manager:
 
     navisbot_controller:
       type: diff_drive_controller/DiffDriveController
-    #The joint_state_broadcaster controller is one of those "non-controlling" ones and is used to ensure our wheel transforms are generated correctly
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-
-
 
 navisbot_controller:
   ros__parameters:
@@ -33,7 +30,7 @@ navisbot_controller:
     cmd_vel_timeout: 0.5
 
     # Base frame_id
-    base_frame_id: base_footprint #default: base_link
+    base_frame_id: base_footprint 
 
     # Publish limited velocity
     publish_limited_velocity: true

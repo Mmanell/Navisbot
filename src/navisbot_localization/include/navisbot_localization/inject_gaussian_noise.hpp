@@ -1,6 +1,4 @@
-#ifndef INJECT_GAUSSIAN_NOISE_H
-#define INJECT_GAUSSIAN_NOISE_H
-
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -40,4 +38,3 @@ private:
     geometry_msgs::msg::TransformStamped transform_stamped_;
 };
 
-#endif // INJECT_GAUSSIAN_NOISE_H
